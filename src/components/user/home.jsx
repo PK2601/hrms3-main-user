@@ -72,7 +72,7 @@ export default function Home({dataemployee = data_employee}) {
       setDob(data.dob);
       setPassword(data.password);
     }
-    fetchEmployees();
+    //fetchEmployees();
   }, [data]);
 
   const items = [
