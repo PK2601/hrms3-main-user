@@ -19,6 +19,7 @@ const data_employee = [
 ];
 
 export default function Home({dataemployee = data_employee}) {
+  const userid=1;
   const [data, setData] = useState(dataemployee[0]);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -35,7 +36,30 @@ export default function Home({dataemployee = data_employee}) {
   const [errorMessage, setErrorMessage] = useState('');
   const [isModified, setIsModified] = useState(false);
 
+  const fetchEmployees = async (userid) => {
+    try {
+      const response = await fetch(`http://localhost:9036/employees/${userid}`);
+      if (response.ok) {
+        const employees = await response.json();
+        setData(employees);
+      } else {
+        console.error('Failed to fetch employees:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+
+//   const refreshTable = useCallback(async () => {
+//     await fetchEmployees();
+//   }, []);
+
+//   useEffect(() => {
+//     refreshTable();
+//   }, [refreshTable]);
+
   useEffect(() => {
+    fetchEmployees(userid);
     if (data) {
       setUsername(data.username);
       setEmployeeId(data.emp_id);
@@ -48,6 +72,7 @@ export default function Home({dataemployee = data_employee}) {
       setDob(data.dob);
       setPassword(data.password);
     }
+    fetchEmployees();
   }, [data]);
 
   const items = [
