@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Descriptions, Button, Switch, Input } from 'antd';
 import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons';
 
@@ -42,6 +42,16 @@ export default function Home({dataemployee = data_employee}) {
       if (response.ok) {
         const employees = await response.json();
         setData(employees);
+        setUsername(employees.username);
+        setEmployeeId(employees.emp_id);
+        setName(employees.name);
+        setDepartmentId(employees.dept_id);
+        setManagerId(employees.manager_id);
+        setEmail(employees.email);
+        setPhone(employees.phone);
+        setAddress(employees.address);
+        setDob(employees.dob);
+        setPassword(employees.password);
       } else {
         console.error('Failed to fetch employees:', response.statusText);
       }
@@ -50,30 +60,30 @@ export default function Home({dataemployee = data_employee}) {
     }
   };
 
-//   const refreshTable = useCallback(async () => {
-//     await fetchEmployees();
-//   }, []);
-
-//   useEffect(() => {
-//     refreshTable();
-//   }, [refreshTable]);
+  const refreshTable = useCallback(async () => {
+    await fetchEmployees(userid);
+  }, []);
 
   useEffect(() => {
-    fetchEmployees(userid);
-    if (data) {
-      setUsername(data.username);
-      setEmployeeId(data.emp_id);
-      setName(data.name);
-      setDepartmentId(data.dept_id);
-      setManagerId(data.manager_id);
-      setEmail(data.email);
-      setPhone(data.phone);
-      setAddress(data.address);
-      setDob(data.dob);
-      setPassword(data.password);
-    }
-    //fetchEmployees();
-  }, [data]);
+    refreshTable();
+  }, [refreshTable]);
+
+  // useEffect(() => {
+  //   fetchEmployees(userid);
+  //   if (data) {
+  //     setUsername(data.username);
+  //     setEmployeeId(data.emp_id);
+  //     setName(data.name);
+  //     setDepartmentId(data.dept_id);
+  //     setManagerId(data.manager_id);
+  //     setEmail(data.email);
+  //     setPhone(data.phone);
+  //     setAddress(data.address);
+  //     setDob(data.dob);
+  //     setPassword(data.password);
+  //   }
+  //   //fetchEmployees();
+  // }, [data]);
 
   const items = [
     {
