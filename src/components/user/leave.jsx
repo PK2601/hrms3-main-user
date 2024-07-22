@@ -1,8 +1,7 @@
 import React from 'react'
 import TablesLeavesEmp from './Leave-Table'
 
-export default function Leave(){
-    const userid=1;
+export default function Leave({userid}){
     return (
         <div>
             <p style={{ marginBottom: '20px', fontSize: '2rem', color: 'slate-800' }}>Leave</p>
