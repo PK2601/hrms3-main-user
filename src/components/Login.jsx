@@ -110,7 +110,7 @@ const LogIn = ({ setAdminLoggedIn, setUserLoggedIn, setUserName }) => {
           boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
         }}>
           <Title level={3} style={{ color: 'darkblue', marginBottom: '20px' }}>
-            Enter your admin credentials
+            Enter your credentials
           </Title>
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
             <Input
