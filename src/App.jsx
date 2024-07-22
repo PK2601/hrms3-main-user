@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/shared/Layout';
 import Dashboard from './components/Dashboard';
 import EmployeeList from './components/Employee-List';
@@ -86,7 +86,8 @@ function App() {
               </ProtectedRoute>
             } 
           />
-          <Route path="/" element={<Login setAdminLoggedIn={setAdminLoggedIn} setUserLoggedIn={setUserLoggedIn} />} />
+          {/* {<Route path="/" element={<Login setAdminLoggedIn={setAdminLoggedIn} setUserLoggedIn={setUserLoggedIn} />} />} */}
+          <Route path="*" element={<Navigate to="/" />} />
         </Route>
       </Routes>
     </Router>
