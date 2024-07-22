@@ -295,6 +295,7 @@ export default function Home({dataemployee = data_employee, userid}) {
           setIsEditing(false);
           setIsModified(false);
           setErrorMessage('');
+          refreshTable();
         } else {
           console.error('Error modifying employee:', response.statusText);
         }
@@ -316,6 +317,7 @@ export default function Home({dataemployee = data_employee, userid}) {
           setIsEditing(false);
           setIsModified(false);
           setErrorMessage('');
+          refreshTable();
         } else {
           console.error('Error modifying employee password:', response.statusText);
         }
