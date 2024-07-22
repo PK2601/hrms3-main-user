@@ -1,13 +1,15 @@
 import React from 'react'
 import classNames from 'classnames'
 import { FcConferenceCall } from "react-icons/fc";
-import { Sidebar_Links, Sidebar_Links_Bottom, Sidebar_Links_User } from '../../lib/consts/navigation';
+import { Sidebar_Links, Sidebar_Links_Bottom } from '../../lib/consts/navigation';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Popconfirm } from 'antd';
+import { FcGrid } from "react-icons/fc";
+import { FcLeave } from "react-icons/fc";
 
 const linkClasses = 'flex items-center gap-2 font-light px-3 py-2 hover:bg-neutral-700 hover:no-underline active:bg-neutral-600 rounded-sm text-base'
 
-export default function Sidebar({setAdminLoggedIn, setUserLoggedIn, adminloggedIn, userloggedIn}){
+export default function Sidebar({setAdminLoggedIn, setUserLoggedIn, adminloggedIn, userloggedIn, username}){
     if (adminloggedIn){
     return (
         <div className='bg-slate-800 w-60 p-3 flex flex-col text-white'>
@@ -29,6 +31,20 @@ export default function Sidebar({setAdminLoggedIn, setUserLoggedIn, adminloggedI
     )
     }
     else if (userloggedIn){
+        const Sidebar_Links_User = [
+            {
+                key:'home',
+                label:'Home',
+                path:`/home/${username}`,
+                icon:<FcGrid />
+            },
+            {
+                key:'leave',
+                label:'Leave',
+                path:`/leave/${username}`,
+                icon:<FcLeave />
+            }
+        ]
         return (
             <div className='bg-slate-800 w-60 p-3 flex flex-col text-white'>
                 <div className='flex justify-center'>

@@ -21,7 +21,7 @@ function App() {
     <Router>
       <Routes>
         <Route index element={<Login setAdminLoggedIn={setAdminLoggedIn} setUserLoggedIn={setUserLoggedIn} setUserName={setUserName} />} />
-        <Route path="/" element={<Layout setAdminLoggedIn={setAdminLoggedIn} setUserLoggedIn={setUserLoggedIn} adminloggedIn={adminloggedIn} userloggedIn={userloggedIn}/>}>
+        <Route path="/" element={<Layout setAdminLoggedIn={setAdminLoggedIn} setUserLoggedIn={setUserLoggedIn} adminloggedIn={adminloggedIn} userloggedIn={userloggedIn} username={username}/>}>
           <Route 
             path="dashboard" 
             element={
@@ -70,23 +70,23 @@ function App() {
               </ProtectedRoute>
             } 
           />
-          <Route path="/" element={<Login setAdminLoggedIn={setAdminLoggedIn} setUserLoggedIn={setUserLoggedIn}/>} />
           <Route 
-            path={`/home/${username}`}
+            path={`home/${username}`}
             element={
               <ProtectedRoute isAuthenticated={userloggedIn}>
-                <Home />
+                <Home userid={username}/>
               </ProtectedRoute>
             } 
           />
           <Route 
-            path={`/leave/${username}`}
+            path={`leave/${username}`}
             element={
               <ProtectedRoute isAuthenticated={userloggedIn}>
-                <Leave />
+                <Leave userid={username}/>
               </ProtectedRoute>
             } 
           />
+          <Route path="/" element={<Login setAdminLoggedIn={setAdminLoggedIn} setUserLoggedIn={setUserLoggedIn} />} />
         </Route>
       </Routes>
     </Router>

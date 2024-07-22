@@ -18,12 +18,11 @@ const data_employee = [
     },
 ];
 
-export default function Home({dataemployee = data_employee}) {
-  const userid=1;
-  const [data, setData] = useState(dataemployee[0]);
+export default function Home({dataemployee = data_employee, userid}) {
+  //const [data, setData] = useState(dataemployee[0]);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [username, setUsername] = useState('');
+  //const [username, setUsername] = useState('');
   const [employeeid, setEmployeeId] = useState('');
   const [name, setName] = useState('');
   const [departmentid, setDepartmentId] = useState('');
@@ -41,8 +40,8 @@ export default function Home({dataemployee = data_employee}) {
       const response = await fetch(`http://localhost:9036/employees/${userid}`);
       if (response.ok) {
         const employees = await response.json();
-        setData(employees);
-        setUsername(employees.username);
+        //setData(employees);
+        //setUsername(employees.username);
         setEmployeeId(employees.emp_id);
         setName(employees.name);
         setDepartmentId(employees.dept_id);
@@ -51,7 +50,7 @@ export default function Home({dataemployee = data_employee}) {
         setPhone(employees.phone);
         setAddress(employees.address);
         setDob(employees.dob);
-        setPassword(employees.password);
+        //setPassword(employees.password);
       } else {
         console.error('Failed to fetch employees:', response.statusText);
       }
@@ -60,9 +59,24 @@ export default function Home({dataemployee = data_employee}) {
     }
   };
 
+  const fetchEmployeesPassword = async (userid) => {
+    try {
+      const response = await fetch(`http://localhost:9036/employees/${userid}/password`);
+      if (response.ok) {
+        const employees = await response.json();
+        setPassword(employees.password);
+      } else {
+        console.error('Failed to fetch employees password:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching employees password:', error);
+    }
+  };
+
   const refreshTable = useCallback(async () => {
     await fetchEmployees(userid);
-  }, []);
+    await fetchEmployeesPassword(userid);
+  }, [userid]);
 
   useEffect(() => {
     refreshTable();
@@ -86,14 +100,19 @@ export default function Home({dataemployee = data_employee}) {
   // }, [data]);
 
   const items = [
+    // {
+    //   key: '1',
+    //   label: 'Username',
+    //   children: isEditing ? (
+    //     <Input value={username} onChange={(e) => {setIsModified(true); setUsername(e.target.value)}} />
+    //   ) : (
+    //     username
+    //   ),
+    // },
     {
-      key: '1',
-      label: 'Username',
-      children: isEditing ? (
-        <Input value={username} onChange={(e) => {setIsModified(true); setUsername(e.target.value)}} />
-      ) : (
-        username
-      ),
+      key: '4',
+      label: 'Employee Id',
+      children: employeeid
     },
     {
       key: '2',
@@ -119,11 +138,11 @@ export default function Home({dataemployee = data_employee}) {
         key: '3',
         label: '',
     },
-    {
-      key: '4',
-      label: 'Employee Id',
-      children: employeeid
-    },
+    // {
+    //   key: '4',
+    //   label: 'Employee Id',
+    //   children: employeeid
+    // },
     {
         key: '5',
         label: 'Department Id',
@@ -182,7 +201,7 @@ export default function Home({dataemployee = data_employee}) {
     },
   ];
 
-  const isValidUserName = /^[A-Za-z0-9]{4,}$/.test(username);
+  //const isValidUserName = /^[A-Za-z0-9]{4,}$/.test(username);
   const isValidPassword = /^.{4,}$/.test(password);
   const isValidName = /^\S+[A-Za-z ]+$/.test(name);
   const isValidEmail = /\S+@\S+\.\S+/.test(email);
@@ -192,10 +211,12 @@ export default function Home({dataemployee = data_employee}) {
 
   const isFormValid = () => {
     return (
-      username!== '' && password!== '' &&
+      //username!== '' && 
+      password!== '' &&
       name!== '' && email!== '' && phone!== '' &&
       address!== '' && dob!== '' &&
-      isValidUserName && isValidPassword &&
+      //isValidUserName && 
+      isValidPassword &&
       isValidName && isValidEmail && isValidPhone &&
       isValidAddress && isValidDOB
     );
@@ -203,21 +224,22 @@ export default function Home({dataemployee = data_employee}) {
 
   const isFilled = () => {
     return (
-        username!== '' && password!== '' &&
+        //username!== '' && 
+        password!== '' &&
         name!== '' && email!== '' && phone!== '' &&
         address!== '' && dob!== ''
       );
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!isFilled()) {
         setErrorMessage('Please fill in all asterix fields.');
         return;
       }
-      if (!isValidUserName) {
-        setErrorMessage('Username can contain only numbers and string and must be of minimum length 4');
-        return;
-      }
+      // if (!isValidUserName) {
+      //   setErrorMessage('Username can contain only numbers and string and must be of minimum length 4');
+      //   return;
+      // }
       if (!isValidPassword) {
         setErrorMessage('Password length should be minimum 4');
         return;
@@ -242,10 +264,66 @@ export default function Home({dataemployee = data_employee}) {
         setErrorMessage('Date of Birth should be of format YYYY-MM-DD');
         return;
       }
-    setIsEditing(false);
-    setIsModified(false);
-    setErrorMessage('');
-    console.log('Data saved:', { username, password, employeeid, departmentid, managerid, name, email, phone, address, dob });
+
+      const modifiedemployeeData = {
+        id: userid,
+        name,
+        dept_id: departmentid,
+        manager_id: managerid,
+        email,
+        phone: phone.toString(),
+        address,
+        dob,
+      };
+
+      const modifiedemployeePassword = {
+        employeeId: userid,
+        password,
+      };
+  
+      try {
+        const response = await fetch(`http://localhost:9036/employees/${userid}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(modifiedemployeeData),
+        });
+    
+        if (response.ok) {
+          console.log('Employee modified successfully');
+          setIsEditing(false);
+          setIsModified(false);
+          setErrorMessage('');
+        } else {
+          console.error('Error modifying employee:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Network error:', error);
+      }
+      
+      try {
+        const response = await fetch(`http://localhost:9036/employees/${userid}/password`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(modifiedemployeePassword),
+        });
+    
+        if (response.ok) {
+          console.log('Employee password modified successfully');
+          setIsEditing(false);
+          setIsModified(false);
+          setErrorMessage('');
+        } else {
+          console.error('Error modifying employee password:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Network error:', error);
+      }
+    
+    console.log('Data saved:', { password, employeeid, departmentid, managerid, name, email, phone, address, dob });
   };
 
   const handleSwitchClick = () => {

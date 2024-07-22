@@ -8,19 +8,77 @@ const { Title } = Typography;
 const LogIn = ({ setAdminLoggedIn, setUserLoggedIn, setUserName }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  //const [passwordcheck, setPasswordCheck] = useState('');
   const [adminloggedIn, setadminLoggedIn] = useState(false);
   const [userloggedIn, setuserLoggedIn] = useState(false);
 
+  // const fetchEmployeesPassword = async (username) => {
+  //   try {
+  //     const response = await fetch(`http://localhost:9036/employees/${username}/password`);
+  //     if (response.ok) {
+  //       const password = await response.json();
+  //       setPasswordCheck(password);
+  //     } else {
+  //       console.error('Failed to fetch employees password:', response.statusText);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching employees password:', error);
+  //   }
+  // };
+
+  const fetchEmployeesPassword = async (username) => {
+    try {
+      const response = await fetch(`http://localhost:9036/employees/${username}/password`);
+      if (response.ok) {
+        const data = await response.json();
+        const passwordFromServer = data.password;
+        if (passwordFromServer === password) {
+          setUserLoggedIn(true);
+          setuserLoggedIn(true);
+          setUserName(username);
+        } else {
+          alert('Wrong username or password');
+        }
+      } else {
+        console.error('Failed to fetch employees password:', response.statusText);
+        alert('Wrong username or password');
+      }
+    } catch (error) {
+      console.error('Error fetching employees password:', error);
+      alert('Wrong username or password');
+    }
+  };
+
+  // useEffect(() => {
+  //   if (passwordcheck && passwordcheck === password) {
+  //     setUserLoggedIn(true);
+  //     setuserLoggedIn(true);
+  //     setPasswordCheck('');
+  //     setUserName(username);
+  //   } else if (passwordcheck) {
+  //     alert('Wrong username or password');
+  //   }
+  // }, [passwordcheck, password, setUserLoggedIn, setUserName, username]);
+
   const imageUrl = 'https://wallpaper.forfun.com/fetch/8f/8f0b1487338dc0820748ada8adba3df7.jpeg?h=1200&r=0.5'
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (username === 'admin' && password === 'password') {
       setAdminLoggedIn(true);
       setadminLoggedIn(true);
     } 
-    else if (username === 'user' && password === 'password') {
-      setUserLoggedIn(true);
-      setuserLoggedIn(true);
-      setUserName(username);
+    else if (username !== '') {
+      parseInt(username);
+      fetchEmployeesPassword(username);
+      // console.log(passwordcheck);
+      // if (passwordcheck === password){
+      //   setUserLoggedIn(true);
+      //   setuserLoggedIn(true);
+      //   setPasswordCheck('');
+      //   setUserName(username);
+      //   }
+      // else {
+      //   alert('Wrong username1 or password')
+      // }
     } else {
       alert('Wrong username or password');
     }

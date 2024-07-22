@@ -1,7 +1,7 @@
 import React from 'react'
 import PopoverDemo from './Notification';
 
-export default function Header({adminloggedIn, userloggedIn}){
+export default function Header({adminloggedIn, userloggedIn, username}){
     if (adminloggedIn){
         return(
             <div className='bg-slate-600 h-14 p-4 text-white flex justify-between items-center'>
@@ -13,7 +13,7 @@ export default function Header({adminloggedIn, userloggedIn}){
     else if (userloggedIn){
         return(
             <div className='bg-slate-600 h-14 p-4 text-white flex justify-between items-center'>
-                Welcome
+                Welcome {username}
                 <PopoverDemo />
             </div>
         )

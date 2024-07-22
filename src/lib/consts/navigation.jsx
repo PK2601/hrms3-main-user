@@ -54,17 +54,17 @@ export const Sidebar_Links_Bottom = [
     }
 ]
 
-export const Sidebar_Links_User = [
-    {
-        key:'home',
-        label:'Home',
-        path:'/home/user',
-        icon:<FcGrid />
-    },
-    {
-        key:'leave',
-        label:'Leave',
-        path:'/leave/user',
-        icon:<FcLeave />
-    }
-]
+// export const Sidebar_Links_User = [
+//     {
+//         key:'home',
+//         label:'Home',
+//         path:'/home/user',
+//         icon:<FcGrid />
+//     },
+//     {
+//         key:'leave',
+//         label:'Leave',
+//         path:'/leave/user',
+//         icon:<FcLeave />
+//     }
+// ]
