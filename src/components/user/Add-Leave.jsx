@@ -81,9 +81,10 @@ const EmployeeLeaveAdd = ({refreshTable, userid}) => {
     }
 
     const leavetypeIdInt = parseInt(leavetypeId);
+    const useridInt = parseInt(userid);
 
     const employeeleaveData = {
-      emp_id: userid,
+      emp_id: useridInt,
       leave_type_id: leavetypeIdInt,
       start_date: startdate,
       end_date: enddate
