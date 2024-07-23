@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Table, Input, Select, Popconfirm } from 'antd';
 //import { MinusCircleFilled } from '@ant-design/icons';
 import DepartmentAdd from '../Add-Department';
+import { notification } from 'antd';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -79,13 +80,31 @@ const TablesDept = ({datadept = data_dept}) => {
       });
       if (response.ok) {
         setData(data.filter(item => item.key !== key));
-        console.log('Departments deleted successfully');
+        console.log('Department deleted successfully');
+        notification.success({
+          message: 'Success',
+          description: 'Department deleted successfully',
+          placement: 'topRight',
+          duration: 3,
+        });
         refreshTable();
       } else {
-        console.error('Error deleting departmens:', response.statusText);
+        console.error('Error deleting department:', response.statusText);
+        notification.error({
+          message: 'Error',
+          description: 'Error deleting department',
+          placement: 'topRight',
+          duration: 3,
+        });
       }
     } catch (error) {
       console.error('Network error:', error);
+      notification.error({
+        message: 'Error',
+        description: 'Network error',
+        placement: 'topRight',
+        duration: 3,
+      });
     }
   };
 

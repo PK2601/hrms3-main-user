@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { screen, fireEvent } from '@testing-library/react';
+import { notification } from 'antd';
 
 const LeaveTypesAdd = ({refreshTable}) => {
   const [leavetypename, setLeaveTypeName] = useState('');
@@ -59,6 +60,12 @@ const LeaveTypesAdd = ({refreshTable}) => {
   
       if (response.ok) {
         console.log('Leave Type added successfully');
+        notification.success({
+          message: 'Success',
+          description: 'Leave Type added successfully',
+          placement: 'topRight',
+          duration: 3,
+        });
         // Clear the form
         setLeaveTypeName('');
         setErrorMessage('');
@@ -67,9 +74,21 @@ const LeaveTypesAdd = ({refreshTable}) => {
         refreshTable();
       } else {
         console.error('Error adding leave type:', response.statusText);
+        notification.error({
+          message: 'Error',
+          description: 'Error adding leave type',
+          placement: 'topRight',
+          duration: 3,
+        });
       }
     } catch (error) {
       console.error('Network error:', error);
+      notification.error({
+        message: 'Error',
+        description: 'Network error',
+        placement: 'topRight',
+        duration: 3,
+      });
     }
 
     // console.log('Leave Type Data:', leavetypeData);

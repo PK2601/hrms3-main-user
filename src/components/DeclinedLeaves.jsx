@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Input, Select, Button, Popconfirm } from 'antd';
 import { CheckCircleFilled } from '@ant-design/icons';
+import { notification } from 'antd';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -78,12 +79,30 @@ const DeclinedLeaves = ({datadeclinedleaves = data_declinedleaves, refreshTable}
       });
       if (response.ok) {
         console.log('Leave approved successfully');
+        notification.success({
+          message: 'Success',
+          description: 'Leave approved successfully',
+          placement: 'topRight',
+          duration: 3,
+        });
         refreshTable();
       } else {
         console.error('Error approving leave:', response.statusText);
+        notification.error({
+          message: 'Error',
+          description: 'Error approving leave',
+          placement: 'topRight',
+          duration: 3,
+        });
       }
     } catch (error) {
       console.error('Network error:', error);
+      notification.error({
+        message: 'Error',
+        description: 'Network error',
+        placement: 'topRight',
+        duration: 3,
+      });
     }
   };
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Table, Input, Select, Popconfirm } from 'antd';
 //import { MinusCircleFilled } from '@ant-design/icons';
 import LeaveTypesAdd from '../Add-LeaveTypes';
+import { notification } from 'antd';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -67,12 +68,30 @@ const TablesLeaveTypes = ({dataleavetypes = data_leavetypes}) => {
       if (response.ok) {
         setData(data.filter(item => item.key !== key));
         console.log('Leave Type deleted successfully');
+        notification.success({
+          message: 'Success',
+          description: 'Leave Type deleted successfully',
+          placement: 'topRight',
+          duration: 3,
+        });
         refreshTable();
       } else {
         console.error('Error deleting leave type:', response.statusText);
+        notification.error({
+          message: 'Error',
+          description: 'Error deleting leave type',
+          placement: 'topRight',
+          duration: 3,
+        });
       }
     } catch (error) {
       console.error('Network error:', error);
+      notification.error({
+        message: 'Error',
+        description: 'Network error',
+        placement: 'topRight',
+        duration: 3,
+      });
     }
   };
 

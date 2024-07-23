@@ -3,6 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import * as Select from '@radix-ui/react-select';
 import { Cross2Icon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { screen, fireEvent } from '@testing-library/react';
+import { notification } from 'antd';
 
 const EmployeeModify = ({record, refreshTable}) => {
   const [id, setId] = useState('');
@@ -238,6 +239,12 @@ const EmployeeModify = ({record, refreshTable}) => {
   
       if (response.ok) {
         console.log('Employee modified successfully');
+        notification.success({
+          message: 'Success',
+          description: 'Employee modified successfully',
+          placement: 'topRight',
+          duration: 3,
+        });
         setId('');
         setName('');
         setDepartmentId('');
@@ -252,9 +259,21 @@ const EmployeeModify = ({record, refreshTable}) => {
         refreshTable();
       } else {
         console.error('Error modifying employee:', response.statusText);
+        notification.error({
+          message: 'Error',
+          description: 'Error modifying employee',
+          placement: 'topRight',
+          duration: 3,
+        });
       }
     } catch (error) {
       console.error('Network error:', error);
+      notification.error({
+        message: 'Error',
+        description: 'Network error',
+        placement: 'topRight',
+        duration: 3,
+      });
     }
 
     

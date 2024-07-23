@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Input, Select, Button, Popconfirm } from 'antd';
 import { CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
+import { notification } from 'antd';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -82,12 +83,30 @@ const PendingLeaves = ({datapendingleaves = data_pendingleaves, refreshTable}) =
       });
       if (response.ok) {
         console.log('Leave declined successfully');
+        notification.success({
+          message: 'Success',
+          description: 'Leave declined successfully',
+          placement: 'topRight',
+          duration: 3,
+        });
         refreshTable();
       } else {
         console.error('Error declining leave:', response.statusText);
+        notification.error({
+          message: 'Error',
+          description: 'Error declining leave',
+          placement: 'topRight',
+          duration: 3,
+        });
       }
     } catch (error) {
       console.error('Network error:', error);
+      notification.error({
+        message: 'Error',
+        description: 'Network error',
+        placement: 'topRight',
+        duration: 3,
+      });
     }
   };
   const handleApprove = async (key) => {
@@ -100,12 +119,30 @@ const PendingLeaves = ({datapendingleaves = data_pendingleaves, refreshTable}) =
       });
       if (response.ok) {
         console.log('Leave approved successfully');
+        notification.success({
+          message: 'Success',
+          description: 'Leave approved successfully',
+          placement: 'topRight',
+          duration: 3,
+        });
         refreshTable();
       } else {
         console.error('Error approving leave:', response.statusText);
+        notification.error({
+          message: 'Error',
+          description: 'Error approving leave',
+          placement: 'topRight',
+          duration: 3,
+        });
       }
     } catch (error) {
       console.error('Network error:', error);
+      notification.error({
+        message: 'Error',
+        description: 'Network error',
+        placement: 'topRight',
+        duration: 3,
+      });
     }
   };
 

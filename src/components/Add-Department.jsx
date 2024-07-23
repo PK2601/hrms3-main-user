@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { screen, fireEvent } from '@testing-library/react';
+import { notification } from 'antd';
 
 const DepartmentAdd = ({refreshTable}) => {
   const [departmentname, setdepartmentname] = useState('');
@@ -59,6 +60,12 @@ const DepartmentAdd = ({refreshTable}) => {
   
       if (response.ok) {
         console.log('Department added successfully');
+        notification.success({
+          message: 'Success',
+          description: 'Department added successfully',
+          placement: 'topRight',
+          duration: 3,
+        });
         // Clear the form
         setdepartmentname('');
         setErrorMessage('');
@@ -67,9 +74,21 @@ const DepartmentAdd = ({refreshTable}) => {
         refreshTable();
       } else {
         console.error('Error adding department:', response.statusText);
+        notification.error({
+          message: 'Error',
+          description: 'Error adding department',
+          placement: 'topRight',
+          duration: 3,
+        });
       }
     } catch (error) {
       console.error('Network error:', error);
+      notification.error({
+        message: 'Error',
+        description: 'Network error',
+        placement: 'topRight',
+        duration: 3,
+      });
     }
 
     // console.log('Department Data:', departmentData);
