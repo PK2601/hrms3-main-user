@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Table } from 'antd';
 import EmployeeLeaveAdd from './Add-Leave';
-import { notification } from 'antd';
 
 const columns_leave_emp = [
   {
