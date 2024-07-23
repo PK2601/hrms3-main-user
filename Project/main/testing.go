@@ -3,6 +3,7 @@ package main
 import (
 	"Project/main/database"
 	"Project/main/functions"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
@@ -11,6 +12,7 @@ import (
 	//"Project/main/functions"
 	"database/sql"
 	"fmt"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -83,6 +85,17 @@ func main() {
 	router.PUT("/leaves/:leaveId/reject", func(c *gin.Context) {
 		repo.HandleRejectLeaveByLeaveID(c)
 	})
+
+	router.GET("/leavetypes/count", repo.CountLeaveTypes)
+	router.GET("/employees/count", repo.CountEmployees)
+	router.GET("/departments/count", repo.CountDepartments)
+	router.GET("/leaves/approved/count", repo.CountApprovedLeaves) // Add count approved leaves route
+	router.GET("/leaves/declined/count", repo.CountDeclinedLeaves) // Add count declined leaves route
+	router.GET("/leaves/pending/count", repo.CountPendingLeaveApplications)
+
+	router.GET("/employees/:id/password", repo.GetEmployeePassword)
+
+	router.PUT("/employees/:id/password", repo.UpdateEmployeePassword)
 
 	router.Run(":9036")
 }

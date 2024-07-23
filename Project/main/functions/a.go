@@ -694,11 +694,12 @@ import (
 	"Project/Employee"
 	"database/sql"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"math/rand"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Repo struct {
@@ -879,6 +880,52 @@ func (r *Repo) GetEmployees(c *gin.Context) {
 //		// Return the newly created employee object
 //		c.JSON(http.StatusCreated, newEmployee)
 //	}
+
+//func (r *Repo) CreateEmployee(c *gin.Context) {
+//	var newEmployee Employee.Employee
+//
+//	// Bind JSON data to newEmployee struct
+//	if err := c.ShouldBindJSON(&newEmployee); err != nil {
+//		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+//		return
+//	}
+//
+//	// Check for required fields
+//	if newEmployee.Name == "" || newEmployee.Email == "" || newEmployee.Phone == 0 ||
+//		newEmployee.Address == "" || newEmployee.DOB == "" || newEmployee.DeptID == nil {
+//		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input: Name, Email, Phone, Address, DOB, DeptID are required fields"})
+//		return
+//	}
+//
+//	// Generate unique EmpID (if it's not already set)
+//	if newEmployee.EmpID == 0 {
+//		newEmployee.EmpID = rand.Intn(1000) + 1
+//	}
+//
+//	// Ensure db is not nil
+//	if r.db == nil {
+//		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database connection is nil"})
+//		return
+//	}
+//
+//	// Set ManagerID to nil if not provided (assuming it's optional)
+//	if newEmployee.ManagerID == nil {
+//		newEmployee.ManagerID = nil // Explicitly setting it to nil
+//	}
+//
+//	// Execute the SQL insert statement
+//	_, err := r.db.Exec("INSERT INTO EMPLOYEE (EMPLOYEE_ID, EMPLOYEE_NAME, EMPLOYEE_EMAIL, EMPLOYEE_PHONE, EMPLOYEE_ADDRESS, EMPLOYEE_DOB, DEPT_ID, MANAGER_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+//		newEmployee.EmpID, newEmployee.Name, newEmployee.Email, newEmployee.Phone,
+//		newEmployee.Address, newEmployee.DOB, *newEmployee.DeptID, newEmployee.ManagerID)
+//	if err != nil {
+//		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+//		return
+//	}
+//
+//	// Return the newly created employee object
+//	c.JSON(http.StatusCreated, newEmployee)
+//}
+
 func (r *Repo) CreateEmployee(c *gin.Context) {
 	var newEmployee Employee.Employee
 
@@ -887,6 +934,13 @@ func (r *Repo) CreateEmployee(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Debug: Print the incoming employee data
+	fmt.Printf("newEmployee: %+v\n", newEmployee)
+
+	// Debug: Print individual field values
+	fmt.Printf("Name: %s, Email: %s, Phone: %d, Address: %s, DOB: %s, DeptID: %v, ManagerID: %v\n",
+		newEmployee.Name, newEmployee.Email, newEmployee.Phone, newEmployee.Address, newEmployee.DOB, newEmployee.DeptID, newEmployee.ManagerID)
 
 	// Check for required fields
 	if newEmployee.Name == "" || newEmployee.Email == "" || newEmployee.Phone == 0 ||
@@ -906,15 +960,34 @@ func (r *Repo) CreateEmployee(c *gin.Context) {
 		return
 	}
 
-	// Set ManagerID to nil if not provided (assuming it's optional)
-	if newEmployee.ManagerID == nil {
-		newEmployee.ManagerID = nil // Explicitly setting it to nil
+	// Begin a transaction
+	tx, err := r.db.Begin()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 
-	// Execute the SQL insert statement
-	_, err := r.db.Exec("INSERT INTO EMPLOYEE (EMPLOYEE_ID, EMPLOYEE_NAME, EMPLOYEE_EMAIL, EMPLOYEE_PHONE, EMPLOYEE_ADDRESS, EMPLOYEE_DOB, DEPT_ID, MANAGER_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+	// Execute the SQL insert statement for EMPLOYEE table
+	_, err = tx.Exec("INSERT INTO EMPLOYEE (EMPLOYEE_ID, EMPLOYEE_NAME, EMPLOYEE_EMAIL, EMPLOYEE_PHONE, EMPLOYEE_ADDRESS, EMPLOYEE_DOB, DEPT_ID, MANAGER_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 		newEmployee.EmpID, newEmployee.Name, newEmployee.Email, newEmployee.Phone,
 		newEmployee.Address, newEmployee.DOB, *newEmployee.DeptID, newEmployee.ManagerID)
+	if err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Execute the SQL insert statement for login_credentials table
+	_, err = tx.Exec("INSERT INTO login_credentials (EMPLOYEE_ID, PASSWORD) VALUES (?, ?)",
+		newEmployee.EmpID, "password")
+	if err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Commit the transaction
+	err = tx.Commit()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -951,15 +1024,15 @@ func (r *Repo) UpdateEmployee(c *gin.Context) {
 	}
 
 	// Check if any rows were affected by the UPDATE statement
-	rowsAffected, err := result.RowsAffected()
+	_, err = result.RowsAffected()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to retrieve rows affected: %v", err)})
 		return
 	}
-	if rowsAffected == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Employee with ID %d not found", id)})
-		return
-	}
+	//if rowsAffected == 0 {
+	//	c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Employee with ID %d not found", id)})
+	//	return
+	//}
 
 	// Fetch the updated employee details from the database
 	err = r.db.QueryRow("SELECT EMPLOYEE_NAME, EMPLOYEE_EMAIL, EMPLOYEE_PHONE, EMPLOYEE_ADDRESS, EMPLOYEE_DOB, DEPT_ID, MANAGER_ID FROM EMPLOYEE WHERE EMPLOYEE_ID = ?", id).
@@ -1342,7 +1415,7 @@ func (r *Repo) GetLeaveByEmpID(c *gin.Context) {
 		return
 	}
 
-	rows, err := r.db.Query("SELECT EMP_ID, START_DATE, END_DATE, LEAVE_TYPE_ID, APPROVAL_STATUS, APPROVAL_BY FROM leaves WHERE EMP_ID = ?", empID)
+	rows, err := r.db.Query("SELECT LEAVE_ID, EMP_ID, START_DATE, END_DATE, LEAVE_TYPE_ID, APPROVAL_STATUS, APPROVAL_BY FROM leaves WHERE EMP_ID = ?", empID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -1354,7 +1427,7 @@ func (r *Repo) GetLeaveByEmpID(c *gin.Context) {
 		var leave Employee.Leave
 		var approvalStatus sql.NullBool
 		var approvedBy sql.NullInt64
-		err := rows.Scan(&leave.EmpId, &leave.StartDate, &leave.EndDate, &leave.LeaveType_id, &approvalStatus, &approvedBy)
+		err := rows.Scan(&leave.LeaveId, &leave.EmpId, &leave.StartDate, &leave.EndDate, &leave.LeaveType_id, &approvalStatus, &approvedBy)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -1369,10 +1442,10 @@ func (r *Repo) GetLeaveByEmpID(c *gin.Context) {
 		leaves = append(leaves, leave)
 	}
 
-	if len(leaves) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "No leaves found for this employee"})
-		return
-	}
+	//if len(leaves) == 0 {
+	//	c.JSON(http.StatusNotFound, gin.H{"error": "No leaves found for this employee"})
+	//	return
+	//}
 
 	c.JSON(http.StatusOK, leaves)
 }
@@ -1719,4 +1792,127 @@ func (r *Repo) HandleRejectLeaveByLeaveID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Leave rejected successfully"})
+}
+
+func (r *Repo) CountLeaveTypes(c *gin.Context) {
+	var count int
+
+	err := r.db.QueryRow("SELECT COUNT(*) FROM leave_type").Scan(&count)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"count": count})
+}
+func (r *Repo) CountEmployees(c *gin.Context) {
+	var count int
+
+	err := r.db.QueryRow("SELECT COUNT(*) FROM employee").Scan(&count)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"count": count})
+}
+func (r *Repo) CountDepartments(c *gin.Context) {
+	var count int
+
+	err := r.db.QueryRow("SELECT COUNT(*) FROM department").Scan(&count)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"count": count})
+}
+func (r *Repo) CountApprovedLeaves(c *gin.Context) {
+	var count int
+
+	query := "SELECT COUNT(*) FROM leaves WHERE APPROVAL_STATUS = true"
+	err := r.db.QueryRow(query).Scan(&count)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"count": count})
+}
+func (r *Repo) CountDeclinedLeaves(c *gin.Context) {
+	var count int
+
+	query := "SELECT COUNT(*) FROM leaves WHERE APPROVAL_STATUS = false"
+	err := r.db.QueryRow(query).Scan(&count)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"count": count})
+}
+func (r *Repo) CountPendingLeaveApplications(c *gin.Context) {
+	var count int
+
+	query := "SELECT COUNT(*) FROM leaves WHERE APPROVAL_STATUS IS NULL"
+	err := r.db.QueryRow(query).Scan(&count)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"count": count})
+}
+
+func (r *Repo) GetEmployeePassword(c *gin.Context) {
+	employeeID := c.Param("id")
+
+	var password string
+
+	query := "SELECT PASSWORD FROM login_credentials WHERE EMPLOYEE_ID = ?"
+
+	err := r.db.QueryRow(query, employeeID).Scan(&password)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Employee not found or password not set"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"employeeId": employeeID, "password": password})
+}
+func (r *Repo) UpdateEmployeePassword(c *gin.Context) {
+	type PasswordUpdate struct {
+		EmployeeID string `json:"employeeId" binding:"required"`
+		Password   string `json:"password" binding:"required"`
+	}
+
+	var updateData PasswordUpdate
+	if err := c.ShouldBindJSON(&updateData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input: " + err.Error()})
+		return
+	}
+
+	query := "UPDATE login_credentials SET PASSWORD = ? WHERE EMPLOYEE_ID = ?"
+
+	result, err := r.db.Exec(query, updateData.Password, updateData.EmployeeID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	_, err = result.RowsAffected()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	//if rowsAffected == 0 {
+	//	c.JSON(http.StatusNotFound, gin.H{"error": "Employee not found or password not updated"})
+	//	return
+	//}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Password updated successfully"})
 }
