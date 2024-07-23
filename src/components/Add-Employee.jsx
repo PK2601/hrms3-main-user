@@ -166,6 +166,57 @@ const EmployeeAdd = ({refreshTable}) => {
       console.error('Network error:', error);
     }
 
+    // try {
+    //   const response = await fetch('http://localhost:9036/employees', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(employeeData),
+    //   });
+  
+    //   if (response.ok) {
+    //     console.log('Employee added successfully');
+    //     const newEmployee = await response.json();
+    //     const employeeId = newEmployee.emp_id;
+    //     const password = "password";
+    //     const employeepasswordData = [employeeId, password];
+    //     try {
+    //       const response = await fetch(`http://localhost:9036/employees/${employeeId}/password`, {
+    //         method: 'POST',
+    //         headers: {
+    //           'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify(employeepasswordData),
+    //       });
+      
+    //       if (response.ok) {
+    //         console.log('Employee password added successfully');
+    //       } else {
+    //         console.error('Error adding employee password:', response.statusText);
+    //       }
+    //     } catch (error) {
+    //       console.error('Network error:', error);
+    //     }
+    //     // Clear the form
+    //     setName('');
+    //     setDepartmentId('1');
+    //     setManagerId('');
+    //     setEmail('');
+    //     setPhone('');
+    //     setAddress('');
+    //     setDob('');
+    //     setErrorMessage('');
+    //     const closeButton = screen.getByTestId('close');
+    //     fireEvent.click(closeButton);
+    //     refreshTable();
+    //   } else {
+    //     console.error('Error adding employee:', response.statusText);
+    //   }
+    // } catch (error) {
+    //   console.error('Network error:', error);
+    // }
+
     // console.log('Employee Data:', employeeData);
 
     // setName('');
