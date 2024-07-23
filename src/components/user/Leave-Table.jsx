@@ -115,21 +115,9 @@ const TablesLeavesEmp = ({dataleaveemp = data_leave_emp, userid}) => {
         setData(leaves);
       } else {
         console.error('Failed to fetch leaves:', response.statusText);
-        notification.error({
-          message: 'Error',
-          description: 'Failed to fetch leaves',
-          placement: 'topRight',
-          duration: 3,
-        }); 
       }
     } catch (error) {
       console.error('Error fetching leaves:', error);
-      notification.error({
-        message: 'Error',
-        description: 'Error fetching leaves',
-        placement: 'topRight',
-        duration: 3,
-      }); 
     }
   };
    return (

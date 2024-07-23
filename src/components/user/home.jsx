@@ -54,21 +54,9 @@ export default function Home({dataemployee = data_employee, userid}) {
         //setPassword(employees.password);
       } else {
         console.error('Failed to fetch employees:', response.statusText);
-        notification.error({
-          message: 'Error',
-          description: 'Failed to fetch employees',
-          placement: 'topRight',
-          duration: 3,
-        }); 
       }
     } catch (error) {
       console.error('Error fetching employees:', error);
-      notification.error({
-        message: 'Error',
-        description: 'Error fetching employees',
-        placement: 'topRight',
-        duration: 3,
-      }); 
     }
   };
 
@@ -80,21 +68,9 @@ export default function Home({dataemployee = data_employee, userid}) {
         setPassword(employees.password);
       } else {
         console.error('Failed to fetch employees password:', response.statusText);
-        notification.error({
-          message: 'Error',
-          description: 'Failed to fetch employees password',
-          placement: 'topRight',
-          duration: 3,
-        }); 
       }
     } catch (error) {
       console.error('Error fetching employees password:', error);
-      notification.error({
-        message: 'Error',
-        description: 'Error fetching employees password',
-        placement: 'topRight',
-        duration: 3,
-      }); 
     }
   };
 
