@@ -75,7 +75,9 @@ const LeaveManagement = () => {
       }
       key="1"
     >
+      <div className='flex flex-col gap-14 max-h-screen overflow-y-auto pb-40'>
       <PendingLeaves datapendingleaves = {pendingleaves} refreshTable = {refreshTable}/>
+      </div>
     </Tabs.TabPane>
     <Tabs.TabPane
       tab={
@@ -86,7 +88,9 @@ const LeaveManagement = () => {
       }
       key="2"
     >
+      <div className='flex flex-col gap-14 max-h-screen overflow-y-auto pb-40'>
       <ApprovedLeaves dataapprovedleaves={approvedleaves} refreshTable={refreshTable}/>
+      </div>
     </Tabs.TabPane>
     <Tabs.TabPane
       tab={
@@ -97,7 +101,9 @@ const LeaveManagement = () => {
       }
       key="3"
     >
+      <div className='flex flex-col gap-14 max-h-screen overflow-y-auto pb-40'>
       <DeclinedLeaves datadeclinedleaves={declinedleaves} refreshTable={refreshTable}/>
+      </div>
     </Tabs.TabPane>
   </Tabs>
   )
