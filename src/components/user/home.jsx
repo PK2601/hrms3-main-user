@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Descriptions, Button, Switch, Input } from 'antd';
 import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons';
+import { notification } from 'antd';
 
 const data_employee = [
     {
@@ -53,9 +54,21 @@ export default function Home({dataemployee = data_employee, userid}) {
         //setPassword(employees.password);
       } else {
         console.error('Failed to fetch employees:', response.statusText);
+        notification.error({
+          message: 'Error',
+          description: 'Failed to fetch employees',
+          placement: 'topRight',
+          duration: 3,
+        }); 
       }
     } catch (error) {
       console.error('Error fetching employees:', error);
+      notification.error({
+        message: 'Error',
+        description: 'Error fetching employees',
+        placement: 'topRight',
+        duration: 3,
+      }); 
     }
   };
 
@@ -67,9 +80,21 @@ export default function Home({dataemployee = data_employee, userid}) {
         setPassword(employees.password);
       } else {
         console.error('Failed to fetch employees password:', response.statusText);
+        notification.error({
+          message: 'Error',
+          description: 'Failed to fetch employees password',
+          placement: 'topRight',
+          duration: 3,
+        }); 
       }
     } catch (error) {
       console.error('Error fetching employees password:', error);
+      notification.error({
+        message: 'Error',
+        description: 'Error fetching employees password',
+        placement: 'topRight',
+        duration: 3,
+      }); 
     }
   };
 
@@ -291,39 +316,90 @@ export default function Home({dataemployee = data_employee, userid}) {
         });
     
         if (response.ok) {
+          try {
+            const response = await fetch(`http://localhost:9036/employees/${userid}/password`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(modifiedemployeePassword),
+            });
+        
+            if (response.ok) {
+              console.log('Employee password modified successfully');
+              notification.success({
+                message: 'Success',
+                description: 'Employee details modified successfully',
+                placement: 'topRight',
+                duration: 3,
+              });  
+              setIsEditing(false);
+              setIsModified(false);
+              setErrorMessage('');
+              refreshTable();
+            } else {
+              console.error('Error modifying employee password:', response.statusText);
+              notification.error({
+                message: 'Error',
+                description: 'Error modifying employee password',
+                placement: 'topRight',
+                duration: 3,
+              }); 
+            }
+          } catch (error) {
+            console.error('Network error:', error);
+            notification.error({
+              message: 'Error',
+              description: 'Network error',
+              placement: 'topRight',
+              duration: 3,
+            }); 
+          }
           console.log('Employee modified successfully');
-          setIsEditing(false);
-          setIsModified(false);
-          setErrorMessage('');
-          refreshTable();
+          // setIsEditing(false);
+          // setIsModified(false);
+          // setErrorMessage('');
+          // refreshTable();
         } else {
           console.error('Error modifying employee:', response.statusText);
+          notification.error({
+            message: 'Error',
+            description: 'Error modifying employee',
+            placement: 'topRight',
+            duration: 3,
+          }); 
         }
       } catch (error) {
         console.error('Network error:', error);
+        notification.error({
+          message: 'Error',
+          description: 'Network error',
+          placement: 'topRight',
+          duration: 3,
+        }); 
       }
       
-      try {
-        const response = await fetch(`http://localhost:9036/employees/${userid}/password`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(modifiedemployeePassword),
-        });
+      // try {
+      //   const response = await fetch(`http://localhost:9036/employees/${userid}/password`, {
+      //     method: 'PUT',
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //     body: JSON.stringify(modifiedemployeePassword),
+      //   });
     
-        if (response.ok) {
-          console.log('Employee password modified successfully');
-          setIsEditing(false);
-          setIsModified(false);
-          setErrorMessage('');
-          refreshTable();
-        } else {
-          console.error('Error modifying employee password:', response.statusText);
-        }
-      } catch (error) {
-        console.error('Network error:', error);
-      }
+      //   if (response.ok) {
+      //     console.log('Employee password modified successfully');
+      //     setIsEditing(false);
+      //     setIsModified(false);
+      //     setErrorMessage('');
+      //     refreshTable();
+      //   } else {
+      //     console.error('Error modifying employee password:', response.statusText);
+      //   }
+      // } catch (error) {
+      //   console.error('Network error:', error);
+      // }
     
     console.log('Data saved:', { password, employeeid, departmentid, managerid, name, email, phone, address, dob });
   };

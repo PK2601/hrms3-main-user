@@ -3,6 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import * as Select from '@radix-ui/react-select';
 import { Cross2Icon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { screen, fireEvent } from '@testing-library/react';
+import { notification } from 'antd';
 
 const EmployeeLeaveAdd = ({refreshTable, userid}) => {
   const [leavetypeId, setLeaveTypeId] = useState(1);
@@ -101,6 +102,12 @@ const EmployeeLeaveAdd = ({refreshTable, userid}) => {
   
       if (response.ok) {
         console.log('Employee Leave added successfully');
+        notification.success({
+          message: 'Success',
+          description: 'Employee Leave added successfully',
+          placement: 'topRight',
+          duration: 3,
+        });        
         setLeaveTypeId('1');
         setStartDate('');
         setEndDate('');
@@ -110,9 +117,21 @@ const EmployeeLeaveAdd = ({refreshTable, userid}) => {
         refreshTable();
       } else {
         console.error('Error adding employee leave:', response.statusText);
+        notification.error({
+          message: 'Error',
+          description: 'Error adding employee leave',
+          placement: 'topRight',
+          duration: 3,
+        }); 
       }
     } catch (error) {
       console.error('Network error:', error);
+        notification.error({
+          message: 'Error',
+          description: 'Network error',
+          placement: 'topRight',
+          duration: 3,
+        }); 
     }
   };
 
