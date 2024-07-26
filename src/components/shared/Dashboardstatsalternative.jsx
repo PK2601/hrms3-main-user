@@ -131,7 +131,7 @@ function Dashboardstatsalternative () {
 
     return (
         <div style={containerStyle}>
-          <Carousel autoplay effect="fade">
+          <Carousel autoplay effect="fade" arrows infinite={false}>
             <div>
             <div style={contentStyle}>
             <BackgroundGradientAnimationDemo title={"Leave Types"} number={availableleavetypes}></BackgroundGradientAnimationDemo>
